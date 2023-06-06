@@ -12,6 +12,7 @@ class TrianglePegGame {
   */
 
   Set<int> pegs = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15};
+  List jumpsMade = [];
 
   static final List allValidJumps = [
     (from: 1, to: 4, over: 2),
@@ -81,8 +82,7 @@ class TrianglePegGame {
       }
 
       if (canJump(jump)) {
-        print("Jumping peg from ${jump.from} to ${jump.to} over ${jump.over}...");
-        //makeJump(jump);
+        makeJump(jump);
       } else {
         print("Jumping peg from ${jump.from} to ${jump.to} is not a valid jump!");
       }
@@ -166,6 +166,13 @@ class TrianglePegGame {
     // The from and over must have pegs while the to doesn't:
     return allValidJumps.contains(jump) &&
         (pegs.contains(jump.from) && !pegs.contains(jump.to) && pegs.contains(jump.over));
+  }
+
+  void makeJump(({int from, int to, int over}) jump) {
+    pegs.remove(jump.from);
+    pegs.add(jump.to);
+    pegs.remove(jump.over);
+    jumpsMade.add(jump);
   }
 }
 
