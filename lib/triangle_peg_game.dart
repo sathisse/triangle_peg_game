@@ -1,5 +1,7 @@
 // ignore_for_file: avoid_print
 
+import 'dart:io';
+
 class TrianglePegGame {
   /* The board:
                1
@@ -16,8 +18,17 @@ class TrianglePegGame {
   }
 
   void doGameLoop() {
-    showBoard();
+    int? startingPeg;
+    do {
+      startingPeg = getStartingPeg();
+    } while (startingPeg == null);
+    if (startingPeg == 0) {
+      return;
+    }
+    pegs.remove(startingPeg);
+    print("\nStarting game with peg $startingPeg missing.");
 
+    showBoard();
   }
 
   void showBoard() {
@@ -36,6 +47,31 @@ class TrianglePegGame {
     } else {
       return "..";
     }
+  }
+
+  int? getStartingPeg() {
+    print("\nWhich missing peg would you like to start with ('q' to quit)?");
+    List<String>? input = stdin.readLineSync()?.split(RegExp(r"[ ,]"));
+    if (input == null) {
+      return null;
+    }
+
+    if (input[0] == 'q') {
+      return 0;
+    }
+
+    if (input.length != 1) {
+      print("Enter exactly 1 peg number!");
+      return null;
+    }
+
+    var startingPeg = int.tryParse(input[0]);
+    if (startingPeg == null || startingPeg < 1 || startingPeg > 15) {
+      print("Enter an integer from 1 to 15 for starting peg number!");
+      return null;
+    }
+
+    return startingPeg;
   }
 }
 
