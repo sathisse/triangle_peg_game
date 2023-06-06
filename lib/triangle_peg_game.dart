@@ -13,6 +13,7 @@ class TrianglePegGame {
 
   Set<int> pegs = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15};
   List jumpsMade = [];
+  bool playGame = true;
 
   static final List allValidJumps = [
     (from: 1, to: 4, over: 2),
@@ -53,8 +54,18 @@ class TrianglePegGame {
     (from: 15, to: 13, over: 14),
   ];
 
-  TrianglePegGame() {
-    doGameLoop();
+  TrianglePegGame({int startingPeg = 0, this.playGame = false}) {
+    if (playGame) {
+      doGameLoop();
+    } else {
+      print("Solving puzzle with peg $startingPeg missing...");
+      pegs.remove(startingPeg);
+      if (solvePuzzle()) {
+        outputJumpsMade('Solved using');
+      } else {
+        print(' No solution found.');
+      }
+    }
   }
 
   void doGameLoop() {
@@ -75,7 +86,6 @@ class TrianglePegGame {
         jump = getJump();
       } while (jump == null);
 
-      print("Got jump: $jump");
       if (jump == (from: 0, to: 0, over: 0)) {
         break;
       }
@@ -202,17 +212,38 @@ class TrianglePegGame {
   }
 
   void outputJumpsMade(String prefix) {
-    stdout.write(" $prefix ${jumpsMade.length} jumps (from, to, over):\n");
-    for (var jmp in jumpsMade) {
-      stdout.write(" (${jmp.from}, ${jmp.to}, ${jmp.over})");
-      if (jmp != jumpsMade.last) {
-        stdout.write(", ");
+    print(" $prefix ${jumpsMade.length} jumps (from, to, over):\n");
+    print('  ${jumpsMade.map((e) => (e.from, e.to, e.over)).join(", ")}');
+  }
+
+  bool solvePuzzle() {
+    var jumpList = allValidJumps.where((e) => canJump(e)).toList();
+    for (var jump in jumpList) {
+      makeJump(jump);
+      if (pegs.length == 1) {
+        return true;
       }
+
+      if (solvePuzzle()) {
+        return true;
+      }
+      undoJump();
     }
-    stdout.write("\n\n");
+    return false;
+  }
+
+  void undoJump() {
+    var jump = jumpsMade.removeLast();
+    pegs.add(jump.over);
+    pegs.remove(jump.to);
+    pegs.add(jump.from);
   }
 }
 
 void main() {
-  TrianglePegGame();
+  TrianglePegGame(playGame: true);
+
+  for (int peg in [1, 2, 4, 5]) {
+    TrianglePegGame(startingPeg: peg);
+  }
 }
