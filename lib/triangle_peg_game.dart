@@ -90,6 +90,8 @@ class TrianglePegGame {
         break;
       }
     }
+    stdout.write("\nThe game ended with ${pegs.length} pegs left. That's ${getGameSuffix()}\n");
+    outputJumpsMade('You made');
 
     showBoard();
   }
@@ -184,6 +186,30 @@ class TrianglePegGame {
     return allValidJumps
         .where((j) => pegs.contains(j.from) && !pegs.contains(j.to) && pegs.contains(j.over))
         .isEmpty;
+  }
+
+  String getGameSuffix() {
+    switch (pegs.length) {
+      case 1:
+        return "genius!";
+      case 2:
+        return "above average.";
+      case 3:
+        return "so-so.";
+      default:
+        return "pretty bad.";
+    }
+  }
+
+  void outputJumpsMade(String prefix) {
+    stdout.write(" $prefix ${jumpsMade.length} jumps (from, to, over):\n");
+    for (var jmp in jumpsMade) {
+      stdout.write(" (${jmp.from}, ${jmp.to}, ${jmp.over})");
+      if (jmp != jumpsMade.last) {
+        stdout.write(", ");
+      }
+    }
+    stdout.write("\n\n");
   }
 }
 
