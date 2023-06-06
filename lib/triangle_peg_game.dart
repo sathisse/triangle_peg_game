@@ -79,6 +79,13 @@ class TrianglePegGame {
       if (jump == (from: 0, to: 0, over: 0)) {
         break;
       }
+
+      if (canJump(jump)) {
+        print("Jumping peg from ${jump.from} to ${jump.to} over ${jump.over}...");
+        //makeJump(jump);
+      } else {
+        print("Jumping peg from ${jump.from} to ${jump.to} is not a valid jump!");
+      }
     }
   }
 
@@ -153,6 +160,12 @@ class TrianglePegGame {
       var over = allValidJumps.where((j) => j.from == from && j.to == to).firstOrNull?.over ?? 0;
       return (from: from, to: to, over: over);
     }
+  }
+
+  bool canJump(({int from, int to, int over}) jump) {
+    // The from and over must have pegs while the to doesn't:
+    return allValidJumps.contains(jump) &&
+        (pegs.contains(jump.from) && !pegs.contains(jump.to) && pegs.contains(jump.over));
   }
 }
 
