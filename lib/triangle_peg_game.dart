@@ -70,7 +70,6 @@ class TrianglePegGame {
 
     while (true) {
       showBoard();
-
       ({int from, int to, int over})? jump = (from: 0, to: 0, over: 0);
       do {
         jump = getJump();
@@ -86,7 +85,13 @@ class TrianglePegGame {
       } else {
         print("Jumping peg from ${jump.from} to ${jump.to} is not a valid jump!");
       }
+
+      if (pegs.length == 1 || noMoreJumps()) {
+        break;
+      }
     }
+
+    showBoard();
   }
 
   void showBoard() {
@@ -173,6 +178,12 @@ class TrianglePegGame {
     pegs.add(jump.to);
     pegs.remove(jump.over);
     jumpsMade.add(jump);
+  }
+
+  bool noMoreJumps() {
+    return allValidJumps
+        .where((j) => pegs.contains(j.from) && !pegs.contains(j.to) && pegs.contains(j.over))
+        .isEmpty;
   }
 }
 
