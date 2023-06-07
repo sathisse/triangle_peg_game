@@ -2,10 +2,10 @@
 
 Triangle Peg Game
 
-## Authors
-   This project is being developed cooperatively by members of the following meetup groups:
-     Tampa Bay Android Developers Group (https://www.meetup.com/Tampa-Bay-Android-Developers-Group/)
-     GDG SunCoast (https://www.meetup.com/GDGSUNCOAST/)
-     GDG Capital Region
+### Authors:
+This project is being developed cooperatively by members of the following meetup groups:
+* [Tampa Bay Android Developers Group](https://www.meetup.com/Tampa-Bay-Android-Developers-Group/)
+* [GDG SunCoast](https://www.meetup.com/GDGSUNCOAST/)
+* GDG Capital Region
 
-   This initial version will be console Dart only; we next add a basic Flutter GUI version.
+This initial version will be console Dart only and will include a way to play the game and a recursive back-off method to solve the game. We will next add a basic Flutter GUI version. If there is interest, we will later add various features such as sound, animation, ads, etc. 
