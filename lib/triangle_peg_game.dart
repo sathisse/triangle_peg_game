@@ -58,7 +58,7 @@ class TrianglePegGame {
     if (playGame) {
       doGameLoop();
     } else {
-      print("Solving puzzle with peg $startingPeg missing...");
+      print('Solving puzzle with peg $startingPeg missing...');
       pegs.remove(startingPeg);
       if (solvePuzzle()) {
         outputJumpsMade('Solved using');
@@ -77,7 +77,7 @@ class TrianglePegGame {
       return;
     }
     pegs.remove(startingPeg);
-    print("\nStarting game with peg $startingPeg missing.");
+    print('\nStarting game with peg $startingPeg missing.');
 
     while (true) {
       showBoard();
@@ -93,40 +93,41 @@ class TrianglePegGame {
       if (canJump(jump)) {
         makeJump(jump);
       } else {
-        print("Jumping peg from ${jump.from} to ${jump.to} is not a valid jump!");
+        print('Jumping peg from ${jump.from} to ${jump.to} is not a valid jump!');
       }
 
       if (pegs.length == 1 || noMoreJumps()) {
         break;
       }
     }
-    stdout.write("\nThe game ended with ${pegs.length} pegs left. That's ${getGameSuffix()}\n");
-    outputJumpsMade('You made');
-
     showBoard();
+
+    print('\nThe game ended with ${pegs.length} pegs left. That\'s ${getGameSuffix()}\n');
+    outputJumpsMade('You made');
   }
 
   void showBoard() {
-    print("\nRemaining pegs: $pegs.\n");
-    print("            1                    ${showPeg(1)}");
-    print("          2   3                ${showPeg(2)}  ${showPeg(3)}");
-    print("        4   5   6            ${showPeg(4)}  ${showPeg(5)}  ${showPeg(6)}");
-    print("      7   8   9  10        ${showPeg(7)}  ${showPeg(8)}  ${showPeg(9)}  ${showPeg(10)}");
-    print("    11  12  13  14  15    "
-        "${showPeg(11)}  ${showPeg(12)}  ${showPeg(13)}  ${showPeg(14)}  ${showPeg(15)}\n");
+    print('\nRemaining pegs: $pegs.\n');
+    print('            1                    ${showPeg(1)}');
+    print('          2   3                ${showPeg(2)}  ${showPeg(3)}');
+    print('        4   5   6            ${showPeg(4)}  ${showPeg(5)}  ${showPeg(6)}');
+    print('      7   8   9  10        ${showPeg(7)}  ${showPeg(8)}  ${showPeg(9)}  ${showPeg(10)}');
+    print('    11  12  13  14  15    '
+        '${showPeg(11)}  ${showPeg(12)}  ${showPeg(13)}  ${showPeg(14)}  ${showPeg(15)}\n');
   }
 
   String showPeg(int peg) {
     if (pegs.contains(peg)) {
-      return "$peg".padLeft(2, " ");
+      return '$peg'.padLeft(2, ' ');
     } else {
-      return "..";
+      return '..';
     }
   }
 
   int? getStartingPeg() {
-    print("\nWhich missing peg would you like to start with ('q' to quit)?");
-    List<String>? input = stdin.readLineSync()?.split(RegExp(r"[ ,]"));
+    print('\nWhich missing peg would you like to start with (\'q\' to quit)?');
+    List<String>? input = stdin.readLineSync()?.split(' ');
+
     if (input == null) {
       return null;
     }
@@ -136,13 +137,13 @@ class TrianglePegGame {
     }
 
     if (input.length != 1) {
-      print("Enter exactly 1 peg number!");
+      print('Enter exactly 1 peg number!');
       return null;
     }
 
     var startingPeg = int.tryParse(input[0]);
     if (startingPeg == null || startingPeg < 1 || startingPeg > 15) {
-      print("Enter an integer from 1 to 15 for starting peg number!");
+      print('Enter an integer from 1 to 15 for starting peg number!');
       return null;
     }
 
@@ -150,9 +151,8 @@ class TrianglePegGame {
   }
 
   ({int from, int to, int over})? getJump() {
-    print("Which jump would you like to make?\n"
-        "Enter from and to peg numbers ('q' to quit):");
-    List<String>? input = stdin.readLineSync()?.split(RegExp(r"[ ,]"));
+    print('Which jump would you like to make?\nEnter from and to peg numbers (\'q\' to quit):');
+    List<String>? input = stdin.readLineSync()?.split(RegExp(r'[ ,]'));
 
     if (input == null) {
       return null;
@@ -163,14 +163,14 @@ class TrianglePegGame {
     }
 
     if (input.length != 2) {
-      print("Enter exactly 2 peg numbers!");
+      print('Enter exactly 2 peg numbers!');
       return null;
     }
 
     var pegs = input.map((e) => int.tryParse(e)).toList();
     if ((pegs[0] == null || pegs[0]! < 1 || pegs[0]! > 15) ||
         (pegs[1] == null || pegs[1]! < 1 || pegs[1]! > 15)) {
-      print("Enter integers from 1 to 15 for each peg number!");
+      print('Enter integers from 1 to 15 for each peg number!');
       return null;
     } else {
       var (from, to) = (pegs[0]!, pegs[1]!);
@@ -194,26 +194,26 @@ class TrianglePegGame {
 
   bool noMoreJumps() {
     return allValidJumps
-        .where((j) => pegs.contains(j.from) && !pegs.contains(j.to) && pegs.contains(j.over))
+        .where((j) => pegs.contains(j.from) && pegs.contains(j.over) && !pegs.contains(j.to))
         .isEmpty;
   }
 
   String getGameSuffix() {
     switch (pegs.length) {
       case 1:
-        return "genius!";
+        return 'genius!';
       case 2:
-        return "above average.";
+        return 'above average.';
       case 3:
-        return "so-so.";
+        return 'so-so.';
       default:
-        return "pretty bad.";
+        return 'pretty bad.';
     }
   }
 
   void outputJumpsMade(String prefix) {
-    print(" $prefix ${jumpsMade.length} jumps (from, to, over):\n");
-    print('  ${jumpsMade.map((e) => (e.from, e.to, e.over)).join(", ")}');
+    print(' $prefix ${jumpsMade.length} jumps (from, to, over):\n');
+    print('  ${jumpsMade.map((e) => (e.from, e.to, e.over)).join(', ')}');
   }
 
   bool solvePuzzle() {
