@@ -81,7 +81,8 @@ class TrianglePegGame {
 
     while (true) {
       showBoard();
-      ({int from, int to, int over})? jump = (from: 0, to: 0, over: 0);
+
+      ({int from, int to, int over})? jump;
       do {
         jump = getJump();
       } while (jump == null);
@@ -180,9 +181,8 @@ class TrianglePegGame {
   }
 
   bool canJump(({int from, int to, int over}) jump) {
-    // The from and over must have pegs while the to doesn't:
-    return allValidJumps.contains(jump) &&
-        (pegs.contains(jump.from) && !pegs.contains(jump.to) && pegs.contains(jump.over));
+    // The 'from' and 'over' holes must have pegs in them while the 'to' one doesn't:
+    return pegs.contains(jump.from) && pegs.contains(jump.over) && !pegs.contains(jump.to);
   }
 
   void makeJump(({int from, int to, int over}) jump) {
