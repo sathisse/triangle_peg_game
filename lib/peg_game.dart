@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 
 import 'draw_board.dart';
 import 'draw_holes.dart';
+import 'draw_pegs.dart';
 
 const double holeSizeFactor = 1 / 25;
 const List<Color> colors = [Colors.blue, Colors.red, Colors.green, Colors.orange, Colors.purple];
@@ -32,6 +33,16 @@ class PegGame extends StatefulWidget {
 }
 
 class _PegGame extends State<PegGame> {
+  Map<int, Color> pegs = {};
+
+  @override
+  void initState() {
+    super.initState();
+    for (int peg = 1; peg <= 15; peg++) {
+      pegs[peg] = Color(colors[Random().nextInt(colors.length)].value);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return LayoutBuilder(builder: (context, constraints) {
@@ -41,6 +52,7 @@ class _PegGame extends State<PegGame> {
       return Stack(children: [
         DrawBoard(width, height),
         DrawHoles(width, height),
+        DrawPegs(width, height, pegs),
       ]);
     });
   }
