@@ -1,6 +1,6 @@
 {
-    "name": "ytriangle_peg_game",
-    "short_name": "ytriangle_peg_game",
+    "name": "triangle_peg_game",
+    "short_name": "triangle_peg_game",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",

@@ -1,6 +1,6 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
     <application
-        android:label="ytriangle_peg_game"
+        android:label="triangle_peg_game"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <activity
