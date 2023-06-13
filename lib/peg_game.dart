@@ -1,4 +1,8 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
+
+import 'draw_board.dart';
 
 class PegGame extends StatefulWidget {
   const PegGame({super.key});
@@ -10,7 +14,13 @@ class PegGame extends StatefulWidget {
 class _PegGame extends State<PegGame> {
   @override
   Widget build(BuildContext context) {
-    // TODO: implement build
-    throw UnimplementedError();
+    return LayoutBuilder(builder: (context, constraints) {
+      var width = min(constraints.maxWidth, constraints.maxHeight);
+      var height = sqrt(3) / 2 * width; // formula for the height of an equilateral triangle
+
+      return Stack(children: [
+        DrawBoard(width, height),
+      ]);
+    });
   }
 }
