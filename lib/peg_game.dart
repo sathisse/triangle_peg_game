@@ -1,5 +1,6 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
+import 'utils.dart';
 
 import 'draw_board.dart';
 import 'draw_holes.dart';
@@ -51,9 +52,20 @@ class _PegGame extends State<PegGame> {
 
       return Stack(children: [
         DrawBoard(width, height),
-        DrawHoles(width, height, pegs),
+        DrawHoles(width, height, pegs, onJumpRequested: onJumpRequested),
         DrawPegs(width, height, pegs),
       ]);
+    });
+  }
+
+  onJumpRequested(int from, int to) {
+    log.d('Jump from $from to $to requested.');
+
+    // TODO: replace these with valid jump operation:
+    pegs[to] = pegs[from]!;
+    pegs.remove(from);
+    setState(() {
+      // Need to update the GUI with new state!
     });
   }
 }

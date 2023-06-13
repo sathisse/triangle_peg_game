@@ -1,15 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:triangle_peg_game/utils.dart';
 import 'peg_game.dart';
 
 class DrawHoles extends StatelessWidget {
   final double width;
   final double height;
   final Map<int, Color> pegs;
+  final Function onJumpRequested;
+
   late final double diameter;
 
-  DrawHoles(this.width, this.height, this.pegs, {super.key}) {
+  DrawHoles(this.width, this.height, this.pegs, {required this.onJumpRequested, super.key}) {
     diameter = width * holeSizeFactor;
   }
 
@@ -39,7 +40,7 @@ class DrawHoles extends StatelessWidget {
                       return pegs[peg] == null;
                     },
                     onAccept: (data) {
-                      log.d('Jump requested: from $data to $peg');
+                      onJumpRequested(data, peg);
                     },
                   ))
             ]))
