@@ -38,7 +38,7 @@ class _PegGame extends State<PegGame> {
   @override
   void initState() {
     super.initState();
-    for (int peg = 1; peg <= 15; peg++) {
+    for (int peg = 2; peg <= 15; peg++) {
       pegs[peg] = Color(colors[Random().nextInt(colors.length)].value);
     }
   }
