@@ -51,7 +51,7 @@ class _PegGame extends State<PegGame> {
 
       return Stack(children: [
         DrawBoard(width, height),
-        DrawHoles(width, height),
+        DrawHoles(width, height, pegs),
         DrawPegs(width, height, pegs),
       ]);
     });
