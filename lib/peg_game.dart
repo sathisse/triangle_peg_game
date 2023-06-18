@@ -84,7 +84,7 @@ class _PegGame extends State<PegGame> {
 
   void resetGame() {
     pegs.clear();
-    for (int peg = 13; peg <= 15; peg++) {
+    for (int peg = 1; peg <= 15; peg++) {
       pegs[peg] = Color(colors[Random().nextInt(colors.length)].value);
     }
 
@@ -93,26 +93,46 @@ class _PegGame extends State<PegGame> {
 
   @override
   Widget build(BuildContext context) {
+    WidgetsBinding.instance.addPostFrameCallback((_) => () {
+          if (pegs.length == 15) {
+            showSnackBarGlobal(context, 'Drag the first peg off of the board.');
+          }
+        }());
     return LayoutBuilder(builder: (context, constraints) {
       var width = min(constraints.maxWidth, constraints.maxHeight);
       var height = sqrt(3) / 2 * width; // formula for the height of an equilateral triangle
 
-      return Stack(children: [
-        DrawBoard(width, height),
-        DrawHoles(width, height, pegs, onJumpRequested: onJumpRequested),
-        DrawPegs(width, height, pegs),
-        if (noMoreJumps())
-          AlertDialog(
-            title: const Text('Game Over'),
-            content: Text("You left ${pegs.length} peg(s).\n\nThat's ${getGameOverRating()}\n"),
-            actions: <Widget>[
-              TextButton(
-                onPressed: () => {resetGame()},
-                child: const Text('OK'),
+      return DragTarget<int>(
+        builder: (
+          BuildContext context,
+          List<dynamic> accepted,
+          List<dynamic> rejected,
+        ) {
+          return Stack(children: [
+            DrawBoard(width, height),
+            DrawHoles(width, height, pegs, onJumpRequested: onJumpRequested),
+            DrawPegs(width, height, pegs),
+            if (noMoreJumps())
+              AlertDialog(
+                title: const Text('Game Over'),
+                content: Text("You left ${pegs.length} peg(s).\n\nThat's ${getGameOverRating()}\n"),
+                actions: <Widget>[
+                  TextButton(
+                    onPressed: () => {resetGame()},
+                    child: const Text('OK'),
+                  ),
+                ],
               ),
-            ],
-          ),
-      ]);
+          ]);
+        },
+        onWillAccept: (data) {
+          log.d('peg_game.onWillAccept() pegs.length = ${pegs.length}');
+          return pegs.length == 15;
+        },
+        onAccept: (data) {
+          onJumpRequested(data, 0);
+        },
+      );
     });
   }
 

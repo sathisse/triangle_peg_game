@@ -37,7 +37,7 @@ class DrawHoles extends StatelessWidget {
                       return SvgPicture.asset('assets/hole.svg', width: diameter, height: diameter);
                     },
                     onWillAccept: (data) {
-                      return pegs[peg] == null;
+                      return pegs.length < 15 && pegs[peg] == null;
                     },
                     onAccept: (data) {
                       onJumpRequested(data, peg);
