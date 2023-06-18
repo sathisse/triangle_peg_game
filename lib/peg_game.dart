@@ -79,9 +79,16 @@ class _PegGame extends State<PegGame> {
   @override
   void initState() {
     super.initState();
+    resetGame();
+  }
+
+  void resetGame() {
+    pegs.clear();
     for (int peg = 13; peg <= 15; peg++) {
       pegs[peg] = Color(colors[Random().nextInt(colors.length)].value);
     }
+
+    setState(() {});
   }
 
   @override
@@ -100,7 +107,7 @@ class _PegGame extends State<PegGame> {
             content: Text("You left ${pegs.length} peg(s).\n\nThat's ${getGameOverRating()}\n"),
             actions: <Widget>[
               TextButton(
-                onPressed: () => {},
+                onPressed: () => {resetGame()},
                 child: const Text('OK'),
               ),
             ],
