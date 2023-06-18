@@ -79,7 +79,7 @@ class _PegGame extends State<PegGame> {
   @override
   void initState() {
     super.initState();
-    for (int peg = 2; peg <= 15; peg++) {
+    for (int peg = 13; peg <= 15; peg++) {
       pegs[peg] = Color(colors[Random().nextInt(colors.length)].value);
     }
   }
@@ -94,8 +94,29 @@ class _PegGame extends State<PegGame> {
         DrawBoard(width, height),
         DrawHoles(width, height, pegs, onJumpRequested: onJumpRequested),
         DrawPegs(width, height, pegs),
+        if (noMoreJumps())
+          AlertDialog(
+            title: const Text('Game Over'),
+            content: Text("You left ${pegs.length} peg(s).\n\nThat's ${getGameOverRating()}\n"),
+            actions: <Widget>[
+              TextButton(
+                onPressed: () => {},
+                child: const Text('OK'),
+              ),
+            ],
+          ),
       ]);
     });
+  }
+
+  bool noMoreJumps() {
+    return pegs.length < 15 &&
+        allValidJumps
+            .where((j) =>
+                pegs.keys.contains(j.from) &&
+                !pegs.keys.contains(j.to) &&
+                pegs.keys.contains(j.over))
+            .isEmpty;
   }
 
   onJumpRequested(int from, int to) {
@@ -147,5 +168,18 @@ class _PegGame extends State<PegGame> {
 
     // Let the GUI know that the state's changed so that it will update itself:
     setState(() {});
+  }
+
+  String getGameOverRating() {
+    switch (pegs.length) {
+      case 1:
+        return 'genius!';
+      case 2:
+        return 'above average.';
+      case 3:
+        return 'so-so.';
+      default:
+        return 'pretty bad.';
+    }
   }
 }
