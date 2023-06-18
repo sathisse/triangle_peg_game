@@ -1,6 +1,7 @@
 // ignore_for_file: avoid_print
-
 import 'dart:io';
+
+typedef JumpRec = ({int from, int to, int over});
 
 class TrianglePegGame {
   /* The board:
@@ -15,7 +16,7 @@ class TrianglePegGame {
   List jumpsMade = [];
   bool playGame = true;
 
-  static final List allValidJumps = [
+  static final List<JumpRec> allValidJumps = [
     (from: 1, to: 4, over: 2),
     (from: 1, to: 6, over: 3),
     (from: 2, to: 7, over: 4),
@@ -82,7 +83,7 @@ class TrianglePegGame {
     while (true) {
       showBoard();
 
-      ({int from, int to, int over})? jump;
+      JumpRec? jump;
       do {
         jump = getJump();
       } while (jump == null);
@@ -103,7 +104,7 @@ class TrianglePegGame {
     }
     showBoard();
 
-    print('\nThe game ended with ${pegs.length} pegs left. That\'s ${getGameSuffix()}\n');
+    print('\nThe game ended with ${pegs.length} pegs left. That\'s ${getGameSuffix()}');
     outputJumpsMade('You made');
   }
 
@@ -151,7 +152,7 @@ class TrianglePegGame {
     return startingPeg;
   }
 
-  ({int from, int to, int over})? getJump() {
+  JumpRec? getJump() {
     print('Which jump would you like to make?\nEnter from and to peg numbers (\'q\' to quit):');
     List<String>? input = stdin.readLineSync()?.split(RegExp(r'[ ,]'));
 
@@ -180,12 +181,12 @@ class TrianglePegGame {
     }
   }
 
-  bool canJump(({int from, int to, int over}) jump) {
+  bool canJump(JumpRec jump) {
     // The 'from' and 'over' holes must have pegs in them while the 'to' one doesn't:
     return pegs.contains(jump.from) && pegs.contains(jump.over) && !pegs.contains(jump.to);
   }
 
-  void makeJump(({int from, int to, int over}) jump) {
+  void makeJump(JumpRec jump) {
     pegs.remove(jump.from);
     pegs.add(jump.to);
     pegs.remove(jump.over);
@@ -212,13 +213,13 @@ class TrianglePegGame {
   }
 
   void outputJumpsMade(String prefix) {
-    print(' $prefix ${jumpsMade.length} jumps (from, to, over):\n');
-    print('  ${jumpsMade.map((e) => (e.from, e.to, e.over)).join(', ')}');
+    print(' $prefix ${jumpsMade.length} jumps (from, to, over):');
+    print('  ${jumpsMade.map((e) => (e.from, e.to, e.over)).join(', ')}\n');
   }
 
   bool solvePuzzle() {
-    var jumpList = allValidJumps.where((e) => canJump(e)).toList();
-    for (var jump in jumpList) {
+    var jumpList = allValidJumps.where(canJump);
+    for (final jump in jumpList) {
       makeJump(jump);
       if (pegs.length == 1) {
         return true;
@@ -243,7 +244,7 @@ class TrianglePegGame {
 void main() {
   TrianglePegGame(playGame: true);
 
-  for (int peg in [1, 2, 4, 5]) {
+  for (final peg in [1, 2, 4, 5]) {
     TrianglePegGame(startingPeg: peg);
   }
 }
