@@ -76,6 +76,12 @@ class PegGame extends StatefulWidget {
 class _PegGame extends State<PegGame> {
   Map<int, Color> pegs = {};
 
+  // The following 2 structures should probably be combined,
+  //   perhaps as a list of Pair<int, Color> (dartx package) or (peg, color) record,
+  //   or maybe as a LinkedHashMap (which is ordered).
+  List jumpsMade = [];
+  List jumpedColors = [];
+
   @override
   void initState() {
     super.initState();
@@ -123,6 +129,25 @@ class _PegGame extends State<PegGame> {
                   ),
                 ],
               ),
+            Column(children: [
+              IconButton(
+                icon: const Icon(Icons.restart_alt, semanticLabel: 'restart'),
+                tooltip: 'Restart game',
+                onPressed: () {
+                  log.d('Undoing last move');
+                  resetGame();
+                },
+              ),
+              const SizedBox(height: 10),
+              IconButton(
+                icon: const Icon(Icons.undo, semanticLabel: 'undo'),
+                tooltip: 'Undo last jump',
+                onPressed: () {
+                  log.d('Undoing last move');
+                  undoJump();
+                },
+              ),
+            ])
           ]);
         },
         onWillAccept: (data) {
@@ -184,16 +209,43 @@ class _PegGame extends State<PegGame> {
   }
 
   void makeJump(JumpRec jump) {
+    jumpsMade.add(jump);
+    log.d('jumpsMade is now $jumpsMade');
+
     // If 'to' is 0, then remove the first peg; otherwise attempt to make a jump.
     if (jump.to == 0) {
+      jumpedColors.add(pegs[jump.from]!);
       pegs.remove(jump.from);
     } else {
       pegs[jump.to] = pegs[jump.from]!;
       pegs.remove(jump.from);
+      jumpedColors.add(pegs[jump.over]!);
       pegs.remove(jump.over);
     }
 
     // Let the GUI know that the state's changed so that it will update itself:
+    setState(() {});
+  }
+
+  void undoJump() {
+    if (jumpsMade.isEmpty) {
+      return;
+    }
+
+    var color = jumpedColors.removeLast();
+    var jump = jumpsMade.removeLast();
+
+    if (jump.to == 0) {
+      log.d('Undoing first jump: $jump');
+      pegs[jump.from] = color;
+    } else {
+      log.d('Undoing std jump: $jump');
+      pegs[jump.over] = color;
+      pegs[jump.from] = pegs[jump.to]!;
+      pegs.remove(jump.to);
+    }
+    log.d('pegs=$pegs');
+
     setState(() {});
   }
 
