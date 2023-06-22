@@ -124,7 +124,7 @@ class _PegGame extends State<PegGame> {
                 content: Text("You left ${pegs.length} peg(s).\n\nThat's ${getGameOverRating()}\n"),
                 actions: <Widget>[
                   TextButton(
-                    onPressed: () => {resetGame()},
+                    onPressed: () => resetGame(),
                     child: const Text('OK'),
                   ),
                 ],
