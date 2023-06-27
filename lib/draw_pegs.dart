@@ -19,8 +19,8 @@ class DrawPegs extends StatelessWidget {
     return Stack(children: <Widget>[
       for (var peg in pegs.entries)
         Positioned(
-            top: height * pegPositions[peg.key].y,
-            left: width * pegPositions[peg.key].x,
+            top: height * pegPositions[peg.key].y - diameter,
+            left: width * pegPositions[peg.key].x - diameter,
             height: paddedDiameter,
             width: paddedDiameter,
             child: Align(

@@ -20,8 +20,8 @@ class DrawHoles extends StatelessWidget {
     return Stack(children: <Widget>[
       for (int peg = 1; peg <= 15; peg++)
         Positioned(
-            top: height * pegPositions[peg].y,
-            left: width * pegPositions[peg].x,
+            top: height * pegPositions[peg].y - diameter,
+            left: width * pegPositions[peg].x - diameter,
             height: paddedDiameter,
             width: paddedDiameter,
             child: Stack(children: <Widget>[
