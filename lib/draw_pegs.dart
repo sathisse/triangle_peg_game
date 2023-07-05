@@ -15,12 +15,12 @@ class DrawPegs extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    var paddedDiameter = diameter * 2;
+    var paddedDiameter = diameter * 3;
     return Stack(children: <Widget>[
       for (var peg in pegs.entries)
         Positioned(
-            top: height * pegPositions[peg.key].y - diameter,
-            left: width * pegPositions[peg.key].x - diameter,
+            top: height * pegPositions[peg.key]!.y - 1.5 * diameter,
+            left: width * pegPositions[peg.key]!.x - 1.5 * diameter,
             height: paddedDiameter,
             width: paddedDiameter,
             child: Align(

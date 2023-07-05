@@ -16,34 +16,35 @@ class DrawHoles extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    var paddedDiameter = diameter * 2;
+    var paddedDiameter = diameter * 3;
     return Stack(children: <Widget>[
       for (int peg = 1; peg <= 15; peg++)
         Positioned(
-            top: height * pegPositions[peg].y - diameter,
-            left: width * pegPositions[peg].x - diameter,
+            top: height * pegPositions[peg]!.y - 1.5 * diameter,
+            left: width * pegPositions[peg]!.x - 1.5 * diameter,
             height: paddedDiameter,
             width: paddedDiameter,
-            child: Stack(children: <Widget>[
-              Align(alignment: Alignment.bottomRight, child: Text('$peg')),
-              Align(
-                  alignment: Alignment.center,
-                  child: DragTarget<int>(
-                    builder: (
-                      BuildContext context,
-                      List<dynamic> accepted,
-                      List<dynamic> rejected,
-                    ) {
-                      return SvgPicture.asset('assets/hole.svg', width: diameter, height: diameter);
-                    },
-                    onWillAccept: (data) {
-                      return pegs.length < 15 && pegs[peg] == null;
-                    },
-                    onAccept: (data) {
-                      onJumpRequested(data, peg);
-                    },
-                  ))
-            ]))
+            child: DragTarget<int>(
+              builder: (
+                BuildContext context,
+                List<dynamic> accepted,
+                List<dynamic> rejected,
+              ) {
+                return Stack(children: <Widget>[
+                  Align(alignment: Alignment.bottomRight, child: Text('$peg')),
+                  Align(
+                      alignment: Alignment.center,
+                      child:
+                          SvgPicture.asset('assets/hole.svg', width: diameter, height: diameter)),
+                ]);
+              },
+              onWillAccept: (data) {
+                return pegs.length < 15 && pegs[peg] == null;
+              },
+              onAccept: (data) {
+                onJumpRequested(data, peg);
+              },
+            ))
     ]);
   }
 }
