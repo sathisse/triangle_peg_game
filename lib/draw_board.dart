@@ -13,9 +13,8 @@ class DrawBoard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     bool isOutsideBoard = true;
-    // TODO: Account for any padding or margins:
     final trianglePath = Path()
-      ..lineTo(width / 2, 0)
+      ..moveTo(width / 2, 0)
       ..lineTo(width, height)
       ..lineTo(0, height)
       ..lineTo(width / 2, 0)
@@ -30,12 +29,14 @@ class DrawBoard extends StatelessWidget {
       },
       hitTestBehavior: HitTestBehavior.translucent,
       onMove: (details) {
+        // Account for height of AppBar, which defaults to 56:
+        final adjustedOffset = Offset(details.offset.dx, details.offset.dy - 56);
         // Set a flag when the mouse is within the triangle of the board:
-        if (trianglePath.contains(details.offset)) {
-          // log.d('Position is over board');
+        if (trianglePath.contains(adjustedOffset)) {
+          log.d('Position is over board');
           isOutsideBoard = false;
         } else {
-          // log.d('Position is not over board');
+          log.d('Position is not over board');
           isOutsideBoard = true;
         }
       },
@@ -44,7 +45,7 @@ class DrawBoard extends StatelessWidget {
         return pegs.length == 15;
       },
       onAccept: (data) {
-        log.d('Board: onAccept with isOutsideBoard = $isOutsideBoard and peg $data and peg-count = ${pegs.length}');
+        log.d('Board: onAccept with isOutsideBoard = $isOutsideBoard and peg $data}');
         if (isOutsideBoard) {
           onJumpRequested(data, 0);
         }
