@@ -8,25 +8,10 @@ import 'utils.dart';
 
 typedef JumpRec = ({int from, int to, int over});
 
+const rows = 5;
+const double pegWidth = 1 / (rows + 1);
 const double holeSizeFactor = 1 / 25;
 const List<Color> colors = [Colors.blue, Colors.red, Colors.green, Colors.orange, Colors.purple];
-Map pegPositions = {
-  1: (x: 0.500, y: 0.167),
-  2: (x: 0.417, y: 0.333),
-  3: (x: 0.583, y: 0.333),
-  4: (x: 0.333, y: 0.500),
-  5: (x: 0.500, y: 0.500),
-  6: (x: 0.667, y: 0.500),
-  7: (x: 0.250, y: 0.667),
-  8: (x: 0.417, y: 0.667),
-  9: (x: 0.583, y: 0.667),
-  10: (x: 0.750, y: 0.667),
-  11: (x: 0.167, y: 0.833),
-  12: (x: 0.333, y: 0.833),
-  13: (x: 0.500, y: 0.833),
-  14: (x: 0.667, y: 0.833),
-  15: (x: 0.833, y: 0.833),
-};
 const List<JumpRec> allValidJumps = [
   (from: 1, to: 4, over: 2),
   (from: 1, to: 6, over: 3),
@@ -65,6 +50,7 @@ const List<JumpRec> allValidJumps = [
   (from: 15, to: 6, over: 10),
   (from: 15, to: 13, over: 14),
 ];
+final Map<int, ({double x, double y})> pegPositions = {};
 
 class PegGame extends StatefulWidget {
   const PegGame({super.key});
@@ -85,6 +71,22 @@ class _PegGame extends State<PegGame> {
   @override
   void initState() {
     super.initState();
+
+    // Build a list of row where each row contains the peg numbers in that row:
+    final grid = [
+      for (var (peg, row) = (0, 1); row <= rows; row++) [for (var col = 1; col <= row; col++) ++peg]
+    ];
+
+    // Build a map, keyed by peg number, with the fractional offsets (x,y) for that peg:
+    double rowOffset = pegWidth;
+    for (int row = rows - 1; row >= 0; row--) {
+      double y = (row + 1) * pegWidth;
+      for (int col = 0; col < grid[row].length; col++) {
+        pegPositions[grid[row][col]] = (x: rowOffset + col * pegWidth, y: y);
+      }
+      rowOffset += pegWidth / 2;
+    }
+
     resetGame();
   }
 
