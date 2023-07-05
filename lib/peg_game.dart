@@ -117,7 +117,7 @@ class _PegGame extends State<PegGame> {
           List<dynamic> rejected,
         ) {
           return Stack(children: [
-            DrawBoard(width, height),
+            DrawBoard(width, height, pegs, onJumpRequested: onJumpRequested),
             DrawHoles(width, height, pegs, onJumpRequested: onJumpRequested),
             DrawPegs(width, height, pegs),
             if (noMoreJumps())
@@ -153,10 +153,11 @@ class _PegGame extends State<PegGame> {
           ]);
         },
         onWillAccept: (data) {
-          log.d('peg_game.onWillAccept() pegs.length = ${pegs.length}');
+          // log.d('peg_game.onWillAccept() pegs.length = ${pegs.length}');
           return pegs.length == 15;
         },
         onAccept: (data) {
+          // Always except drop of first peg (since drag-target will always be outside of board):
           onJumpRequested(data, 0);
         },
       );
