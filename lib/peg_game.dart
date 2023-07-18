@@ -1,5 +1,6 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import 'draw_board.dart';
 import 'draw_holes.dart';
@@ -68,6 +69,8 @@ class _PegGame extends State<PegGame> {
   //   or maybe as a LinkedHashMap (which is ordered).
   List jumpsMade = [];
   List jumpedColors = [];
+  int bestScore = 0;
+  bool noMoreJumps = false;
 
   @override
   void initState() {
@@ -92,6 +95,8 @@ class _PegGame extends State<PegGame> {
   }
 
   void resetGame() {
+    noMoreJumps = false;
+    getBestScore();
     pegs.clear();
     for (int peg = 1; peg <= pegCount; peg++) {
       pegs[peg] = Color(colors[Random().nextInt(colors.length)].value);
@@ -121,7 +126,7 @@ class _PegGame extends State<PegGame> {
             DrawBoard(width, height, pegs, onJumpRequested: onJumpRequested),
             DrawHoles(width, height, pegs, onJumpRequested: onJumpRequested),
             DrawPegs(width, height, pegs),
-            if (noMoreJumps())
+            if (noMoreJumps)
               AlertDialog(
                 title: const Text('Game Over'),
                 content: Text("You left ${pegs.length} peg(s).\n\nThat's ${getGameOverRating()}\n"),
@@ -150,7 +155,17 @@ class _PegGame extends State<PegGame> {
                   undoJump();
                 },
               ),
-            ])
+            ]),
+            Align(
+                alignment: Alignment.topRight,
+                child: Column(children: [
+                  const Text(
+                    'Best Score',
+                    style: TextStyle(fontWeight: FontWeight.bold),
+                  ),
+                  const SizedBox(height: 10),
+                  Text('$bestScore'),
+                ]))
           ]);
         },
         onWillAccept: (data) {
@@ -163,16 +178,6 @@ class _PegGame extends State<PegGame> {
         },
       );
     });
-  }
-
-  bool noMoreJumps() {
-    return pegs.length < pegCount &&
-        allValidJumps
-            .where((j) =>
-                pegs.keys.contains(j.from) &&
-                !pegs.keys.contains(j.to) &&
-                pegs.keys.contains(j.over))
-            .isEmpty;
   }
 
   onJumpRequested(int from, int to) {
@@ -227,6 +232,18 @@ class _PegGame extends State<PegGame> {
       pegs.remove(jump.over);
     }
 
+    if (pegs.length < pegCount &&
+        allValidJumps
+            .where((j) =>
+                pegs.keys.contains(j.from) &&
+                !pegs.keys.contains(j.to) &&
+                pegs.keys.contains(j.over))
+            .isEmpty) {
+      noMoreJumps = true;
+      bestScore = pegs.length;
+      setBestScore(bestScore);
+    }
+
     // Let the GUI know that the state's changed so that it will update itself:
     setState(() {});
   }
@@ -264,5 +281,19 @@ class _PegGame extends State<PegGame> {
       default:
         return 'pretty bad.';
     }
+  }
+
+  Future<void> setBestScore(pegsRemaining) async {
+    final SharedPreferences pref = await SharedPreferences.getInstance();
+    if (pegsRemaining < bestScore) {
+      pref.setInt('scoreData', pegsRemaining);
+      setState(() {});
+    }
+  }
+
+  void getBestScore() async {
+    final SharedPreferences pref = await SharedPreferences.getInstance();
+    bestScore = pref.getInt('scoreData')!;
+    setState(() {});
   }
 }
