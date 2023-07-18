@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:triangle_peg_game/utils.dart';
+import 'utils.dart';
+
+late Path trianglePath;
 
 class DrawBoard extends StatelessWidget {
   final double width;
@@ -13,7 +15,7 @@ class DrawBoard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     bool isOutsideBoard = true;
-    final trianglePath = Path()
+    trianglePath = Path()
       ..moveTo(width / 2, 0)
       ..lineTo(width, height)
       ..lineTo(0, height)
@@ -25,13 +27,16 @@ class DrawBoard extends StatelessWidget {
         List<dynamic> accepted,
         List<dynamic> rejected,
       ) {
-        return SvgPicture.asset('assets/board.svg', width: width, height: height, fit: BoxFit.fill);
+        return Stack(children: <Widget>[
+          SvgPicture.asset('assets/board.svg', width: width, height: height, fit: BoxFit.fill),
+          CustomPaint(size: Size(width, height), painter: Triangle()),
+        ]);
       },
       hitTestBehavior: HitTestBehavior.translucent,
       onMove: (details) {
         // Account for height of AppBar, which defaults to 56:
         final adjustedOffset = Offset(details.offset.dx, details.offset.dy - 56);
-        // Set a flag when the mouse is within the triangle of the board:
+        // Set a flag whether the mouse is outside the triangle of the board:
         if (trianglePath.contains(adjustedOffset)) {
           log.d('Position is over board');
           isOutsideBoard = false;
@@ -51,5 +56,20 @@ class DrawBoard extends StatelessWidget {
         }
       },
     );
+  }
+}
+
+class Triangle extends CustomPainter {
+  @override
+  void paint(Canvas canvas, Size size) {
+    Paint paint = Paint()
+      ..strokeWidth = 5
+      ..style = PaintingStyle.stroke;
+    canvas.drawPath(trianglePath, paint);
+  }
+
+  @override
+  bool shouldRepaint(covariant CustomPainter oldDelegate) {
+    return false;
   }
 }
