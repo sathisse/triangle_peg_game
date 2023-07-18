@@ -9,6 +9,7 @@ import 'utils.dart';
 typedef JumpRec = ({int from, int to, int over});
 
 const rows = 5;
+const pegCount = rows * (rows + 1) / 2;
 const double pegWidth = 1 / (rows + 1);
 const double holeSizeFactor = 1 / 25;
 const List<Color> colors = [Colors.blue, Colors.red, Colors.green, Colors.orange, Colors.purple];
@@ -92,7 +93,7 @@ class _PegGame extends State<PegGame> {
 
   void resetGame() {
     pegs.clear();
-    for (int peg = 1; peg <= 15; peg++) {
+    for (int peg = 1; peg <= pegCount; peg++) {
       pegs[peg] = Color(colors[Random().nextInt(colors.length)].value);
     }
 
@@ -102,7 +103,7 @@ class _PegGame extends State<PegGame> {
   @override
   Widget build(BuildContext context) {
     WidgetsBinding.instance.addPostFrameCallback((_) => () {
-          if (pegs.length == 15) {
+          if (pegs.length == pegCount) {
             showSnackBarGlobal(context, 'Drag the first peg off of the board.');
           }
         }());
@@ -154,7 +155,7 @@ class _PegGame extends State<PegGame> {
         },
         onWillAccept: (data) {
           // log.d('peg_game.onWillAccept() pegs.length = ${pegs.length}');
-          return pegs.length == 15;
+          return pegs.length == pegCount;
         },
         onAccept: (data) {
           // Always except drop of first peg (since drag-target will always be outside of board):
@@ -165,7 +166,7 @@ class _PegGame extends State<PegGame> {
   }
 
   bool noMoreJumps() {
-    return pegs.length < 15 &&
+    return pegs.length < pegCount &&
         allValidJumps
             .where((j) =>
                 pegs.keys.contains(j.from) &&
@@ -178,7 +179,7 @@ class _PegGame extends State<PegGame> {
     log.d('Jump from $from to $to requested.');
 
     JumpRec? jump = getJump(from, to);
-    if (pegs.length == 15 || canJump(jump)) {
+    if (pegs.length == pegCount || canJump(jump)) {
       makeJump(jump);
       showSnackBarGlobal(context, 'Drag a peg over another and into an empty hole.');
     }

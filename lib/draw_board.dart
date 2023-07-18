@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'peg_game.dart';
 import 'utils.dart';
 
 late Path trianglePath;
@@ -47,7 +48,7 @@ class DrawBoard extends StatelessWidget {
       },
       onWillAccept: (data) {
         // log.d('board.onWillAccept with peg $data');
-        return pegs.length == 15;
+        return pegs.length == pegCount;
       },
       onAccept: (data) {
         log.d('Board: onAccept with isOutsideBoard = $isOutsideBoard and peg $data}');

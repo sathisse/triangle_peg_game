@@ -18,7 +18,7 @@ class DrawHoles extends StatelessWidget {
   Widget build(BuildContext context) {
     var paddedDiameter = diameter * 3;
     return Stack(children: <Widget>[
-      for (int peg = 1; peg <= 15; peg++)
+      for (int peg = 1; peg <= pegCount; peg++)
         Positioned(
             top: height * pegPositions[peg]!.y - 1.5 * diameter,
             left: width * pegPositions[peg]!.x - 1.5 * diameter,
@@ -39,7 +39,7 @@ class DrawHoles extends StatelessWidget {
                 ]);
               },
               onWillAccept: (data) {
-                return pegs.length < 15 && pegs[peg] == null;
+                return pegs.length < pegCount && pegs[peg] == null;
               },
               onAccept: (data) {
                 onJumpRequested(data, peg);
