@@ -1,6 +1,7 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:confetti/confetti.dart';
 
 import 'draw_board.dart';
 import 'draw_holes.dart';
@@ -10,7 +11,7 @@ import 'utils.dart';
 typedef JumpRec = ({int from, int to, int over});
 
 const rows = 5;
-const pegCount = rows * (rows + 1) / 2;
+const int pegCount = rows * (rows + 1) ~/ 2;
 const double pegWidth = 1 / (rows + 1);
 const double holeSizeFactor = 1 / 25;
 const List<Color> colors = [Colors.blue, Colors.red, Colors.green, Colors.orange, Colors.purple];
@@ -63,18 +64,22 @@ class PegGame extends StatefulWidget {
 
 class _PegGame extends State<PegGame> {
   Map<int, Color> pegs = {};
+  late ConfettiController _confettiController;
 
   // The following 2 structures should probably be combined,
   //   perhaps as a list of Pair<int, Color> (dartx package) or (peg, color) record,
   //   or maybe as a LinkedHashMap (which is ordered).
   List jumpsMade = [];
   List jumpedColors = [];
-  int bestScore = 0;
+  int bestScore = pegCount;
+  String resultMsg = '';
   bool noMoreJumps = false;
 
   @override
   void initState() {
     super.initState();
+    _confettiController = ConfettiController(duration: const Duration(seconds: 10))
+      ..addListener(() => setState(() {}));
 
     // Build a list of row where each row contains the peg numbers in that row:
     final grid = [
@@ -129,7 +134,7 @@ class _PegGame extends State<PegGame> {
             if (noMoreJumps)
               AlertDialog(
                 title: const Text('Game Over'),
-                content: Text("You left ${pegs.length} peg(s).\n\nThat's ${getGameOverRating()}\n"),
+                content: Text("You left ${pegs.length} peg(s).\n\nThat's $resultMsg}\n"),
                 actions: <Widget>[
                   TextButton(
                     onPressed: () => resetGame(),
@@ -165,7 +170,16 @@ class _PegGame extends State<PegGame> {
                   ),
                   const SizedBox(height: 10),
                   Text('$bestScore'),
-                ]))
+                ])),
+            Align(
+              alignment: Alignment.topCenter,
+              child: ConfettiWidget(
+                confettiController: _confettiController,
+                blastDirection: pi / 2,
+                emissionFrequency: 0.08,
+                numberOfParticles: 12,
+              ),
+            )
           ]);
         },
         onWillAccept: (data) {
@@ -186,7 +200,6 @@ class _PegGame extends State<PegGame> {
     JumpRec? jump = getJump(from, to);
     if (pegs.length == pegCount || canJump(jump)) {
       makeJump(jump);
-      showSnackBarGlobal(context, 'Drag a peg over another and into an empty hole.');
     }
   }
 
@@ -241,7 +254,12 @@ class _PegGame extends State<PegGame> {
             .isEmpty) {
       noMoreJumps = true;
       bestScore = pegs.length;
+      setGameOverResult();
       setBestScore(bestScore);
+
+      showSnackBarGlobal(context, '');
+    } else {
+      showSnackBarGlobal(context, 'Drag a peg over another and into an empty hole.');
     }
 
     // Let the GUI know that the state's changed so that it will update itself:
@@ -270,23 +288,27 @@ class _PegGame extends State<PegGame> {
     setState(() {});
   }
 
-  String getGameOverRating() {
+  void setGameOverResult() {
     switch (pegs.length) {
       case 1:
-        return 'genius!';
+        _confettiController.play();
+        resultMsg = 'genius!';
       case 2:
-        return 'above average.';
+        _confettiController.play();
+        resultMsg = 'above average.';
       case 3:
-        return 'so-so.';
+        _confettiController.play();
+        resultMsg = 'so-so.';
       default:
-        return 'pretty bad.';
+        _confettiController.play();
+        resultMsg = 'pretty bad.';
     }
   }
 
   Future<void> setBestScore(pegsRemaining) async {
     final SharedPreferences pref = await SharedPreferences.getInstance();
     if (pegsRemaining < bestScore) {
-      pref.setInt('scoreData', pegsRemaining);
+      await pref.setInt('scoreData', pegsRemaining);
       setState(() {});
     }
   }
