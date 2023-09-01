@@ -1,6 +1,6 @@
 # triangle_peg_game
 
-Triangle Peg Game
+![Triangle Peg Game](triangle%20peg%20game.png)
 
 ### Authors:
 This project is being developed cooperatively by members of the following meetup groups:
